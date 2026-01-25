@@ -2,7 +2,11 @@ package org.example.interaction
 
 
 
-import org.hibernate.engine.spi.Status
+
+data class BaseMessage(
+    val code: Long? = null,
+    val message: String? = null
+)
 
 
 data class UserResponse(

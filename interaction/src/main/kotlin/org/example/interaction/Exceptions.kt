@@ -1,4 +1,6 @@
-package org.example.user
+package org.example.interaction
+
+
 
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.context.support.ResourceBundleMessageSource
@@ -44,22 +46,23 @@ class UserNotFoundException : DemoExceptionHandler() {
 }
 
 
-class UserAlreadyExistsException(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.USER_ALREADY_EXISTS
-
-}
-class PhoneNumberAlreadyExistsException(): DemoExceptionHandler() {
-    override fun errorCode() = ErrorCodes.PHONE_NUMBER_ALREADY_EXISTS
+class CommentNotFoundException(val commentId: Long) : DemoExceptionHandler() {
+    override fun errorCode() = ErrorCodes.COMMENT_NOT_FOUND
+    override fun getArguments(): Array<Any?>? = arrayOf(commentId)
 }
 
-class PasswordIsIncorrect: DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.PASSWORD_IS_INCORRECT
+class CommentNotAllowedException(val userId: Long) : DemoExceptionHandler() {
+    override fun errorCode() = ErrorCodes.COMMENT_NOT_ALLOWED
+    override fun getArguments(): Array<Any?>? = arrayOf(userId)
 }
 
-class  FollowAlreadyExistsException(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.FOLLOW_ALREADY_EXISTS
+
+class ReactionNotFoundException(val reactionId: Long) : DemoExceptionHandler() {
+    override fun errorCode() = ErrorCodes.REACTION_NOT_FOUND
+    override fun getArguments(): Array<Any?>? = arrayOf(reactionId)
 }
 
-class FollowNotFoundException():DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.FOLLOW_NOT_FOUND
+class ReactionNotAllowedException(val userId: Long) : DemoExceptionHandler() {
+    override fun errorCode() = ErrorCodes.REACTION_NOT_ALLOWED
+    override fun getArguments(): Array<Any?>? = arrayOf(userId)
 }

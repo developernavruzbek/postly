@@ -44,12 +44,12 @@ class CommentServiceImpl(
     override fun deleteComment(commentId: Long) {
         commentRepository.findByIdAndDeletedFalse(commentId)?.let {
             commentRepository.trash(commentId)
-        }?:throw RuntimeException("Comment ${commentId} not found")
+        }?:throw CommentNotFoundException(commentId)
     }
 
     override fun getComment(commentId: Long): CommentResponse {
         var comment = commentRepository.findByIdAndDeletedFalse(commentId)
-            ?: throw RuntimeException("Comment ${commentId} not found")
+            ?: throw CommentNotFoundException(commentId)
 
         var commentUser = userClient.getById(comment.userId)
         return CommentResponse(
@@ -64,7 +64,7 @@ class CommentServiceImpl(
 
     override fun editComment(commentId: Long, commentUpdateRequest: CommentUpdateRequest) {
         var comment1 = commentRepository.findByIdAndDeletedFalse(commentId)
-            ?: throw RuntimeException("Comment ${commentId} not found")
+            ?: throw CommentNotFoundException(commentId)
 
         if (comment1.userId != commentUpdateRequest.userId) {
             throw RuntimeException("User ${commentUpdateRequest.userId} not found")
@@ -114,7 +114,7 @@ class CommentServiceImpl(
             }
         }
         var comments = commentRepository.findAllByPostIdAndDeletedFalse(postId)
-            ?:throw RuntimeException("Comments ${postId} not found")
+            ?:throw CommentNotFoundException(0L)
 
         return   comments.map { comment->
             CommentResponse(
@@ -166,7 +166,7 @@ class ReactionServiceImpl(
     override fun deleteReaction(reactionId: Long) {
         reactionRepository.findByIdAndDeletedFalse(reactionId)?.let {
             reactionRepository.trash(reactionId)
-        }?:throw RuntimeException("Reaction ${reactionId} not found")
+        }?:throw ReactionNotFoundException(reactionId)
 
     }
 
@@ -182,7 +182,7 @@ class ReactionServiceImpl(
                 reactionRepository.save(reaction)
             }
 
-        }?:throw RuntimeException("Reaction ${reactionId} not found")
+        }?:throw ReactionNotFoundException(reactionId)
 
     }
 
@@ -206,8 +206,8 @@ class ReactionServiceImpl(
             reactionMapper.toDto(reaction, userClient.getById(reaction.userId))
         }
         return reactionResponses
-
     }
+
     override fun getAllReactions(): List<ReactionResponse> {
         var reactions = reactionRepository.findAllNotDeleted()
         return  reactions.map {
@@ -218,6 +218,6 @@ class ReactionServiceImpl(
     override fun getReaction(reactionId: Long): ReactionResponse {
         reactionRepository.findByIdAndDeletedFalse(reactionId)?.let {
             return reactionMapper.toDto(it, userClient.getById(it.userId))
-        }?:throw RuntimeException("Reaction ${reactionId} not found")
+        }?:throw ReactionNotFoundException(reactionId)
     }
 }

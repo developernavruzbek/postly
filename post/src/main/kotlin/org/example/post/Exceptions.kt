@@ -45,36 +45,6 @@ class UserNotFoundException : DemoExceptionHandler() {
 }
 
 
-class UserAlreadyExistsException(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.USER_ALREADY_EXISTS
-
-}
-class PhoneNumberAlreadyExistsException(): DemoExceptionHandler() {
-    override fun errorCode() = ErrorCodes.PHONE_NUMBER_ALREADY_EXISTS
-}
-class OrganizationNotFoundException(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.ORGANIZATION_NOT_FOUND
-
-}
-class OrganizationNameAlreadyExists(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.ORGANIZATION_NAME_ALREADY_EXISTS
-
-}
-
-
-class PasswordIsIncorrect: DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.PASSWORD_IS_INCORRECT
-}
-
-
-
-class  FollowAlreadyExistsException(): DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.FOLLOW_ALREADY_EXISTS
-}
-
-class FollowNotFoundException():DemoExceptionHandler(){
-    override fun errorCode() = ErrorCodes.FOLLOW_NOT_FOUND
-}
 class PostNotFoundException(): DemoExceptionHandler(){
     override fun errorCode() = ErrorCodes.POST_NOT_FOUND
 
