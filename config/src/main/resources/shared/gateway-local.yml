@@ -1,0 +1,39 @@
+server:
+  port: ${services.ports.gateway}
+
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      restricted-paths:
+        - /api/v1/[a-zA-Z]+/internal/.*
+      global-filter:
+        - LoggingGlobalFilter
+        - RestrictedPathFilter
+      routes:
+        - id: post-route
+          uri: ${services.hosts.post}
+          predicates:
+            - Path=/api/v1/post/**
+          filters:
+            - RewritePath=/api/v1/post/(?<remaining>.*), /api/v1/post/${remaining}
+        - id: user-route
+          uri: ${services.hosts.user}
+          predicates:
+            - Path=/api/v1/user/**
+          filters:
+            - RewritePath=/api/v1/user/(?<remaining>.*), /api/v1/user/${remaining}
+        - id: follow-route
+          uri: ${services.hosts.user}
+          predicates:
+            - Path=/api/v1/follows/**
+          filters:
+            - RewritePath=/api/v1/follows/(?<remaining>.*), /api/v1/follows/${remaining}
+        - id: interaction-route
+          uri: ${services.hosts.interaction}
+          predicates:
+            - Path=/api/v1/interactions/**
+          filters:
+            - RewritePath=/api/v1/interactions/(?<remaining>.*), /api/v1/interactions/${remaining}

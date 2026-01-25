@@ -1,0 +1,11 @@
+services:
+  hosts:
+    post: http://localhost:8082
+    gateway: http://localhost:7777
+    user: http://localhost:8080
+    interaction: http://localhost:8084
+  ports:
+    post: 8082
+    gateway: 7777
+    user: 8080
+    interaction: 8084
