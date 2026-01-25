@@ -59,6 +59,6 @@ interface CommentRepository : BaseRepository<Comment> {
 
 @Repository
 interface ReactionRepository : BaseRepository<Reaction> {
-
+    fun findAllByPostIdAndDeletedFalse(postId: Long): List<Reaction>
 
 }

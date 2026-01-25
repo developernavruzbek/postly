@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/api/v1/post")
 class PostController(
     private val postService: PostService
 ) {
@@ -25,7 +25,6 @@ class PostController(
 
         return postService.createPost(request)
     }
-
 
     @GetMapping("/{id}")
     fun getPost(@PathVariable id: Long): PostResponse {
@@ -40,4 +39,7 @@ class PostController(
     ): List<PostResponse> {
         return postService.getAllUserId(userId, viewerId)
     }
+
+    @GetMapping
+    fun getAll() = postService.getAllPosts()
 }

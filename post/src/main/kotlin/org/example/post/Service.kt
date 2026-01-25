@@ -8,6 +8,7 @@ interface PostService {
     fun createPost(request: CreatePostRequest): PostResponse
     fun getPost(postId: Long): PostResponse
     fun getAllUserId(userId: Long, viewerId:Long): List<PostResponse>
+    fun getAllPosts(): List<PostResponse>
 }
 
 @Service
@@ -79,5 +80,15 @@ class PostServiceImpl(
         }
         return emptyList()
 
+    }
+
+    override fun getAllPosts(): List<PostResponse> {
+        var posts = postRepository.findAllNotDeleted()
+            ?: throw PostNotFoundException()
+
+        return posts.map { post ->
+            val media = postMediaRepository.findAllNotDeleted().filter { it.postId == post.id }
+            postMapper.toPostResponse(post, media)
+        }
     }
 }

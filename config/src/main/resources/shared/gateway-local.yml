@@ -31,9 +31,15 @@ spring:
             - Path=/api/v1/follows/**
           filters:
             - RewritePath=/api/v1/follows/(?<remaining>.*), /api/v1/follows/${remaining}
-        - id: interaction-route
+        - id: comment-route
           uri: ${services.hosts.interaction}
           predicates:
-            - Path=/api/v1/interactions/**
+            - Path=/api/v1/comments/**
           filters:
-            - RewritePath=/api/v1/interactions/(?<remaining>.*), /api/v1/interactions/${remaining}
+            - RewritePath=/api/v1/comments/(?<remaining>.*), /api/v1/comments/${remaining}
+        - id: reaction-route
+          uri: ${services.hosts.interaction}
+          predicates:
+            - Path=/api/v1/reactions/**
+          filters:
+            - RewritePath=/api/v1/reactions/(?<remaining>.*), /api/v1/reactions/${remaining}

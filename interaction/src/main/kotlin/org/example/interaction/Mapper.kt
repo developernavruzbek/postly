@@ -18,3 +18,29 @@ class CommentMapper{
         }
     }
 }
+
+@Component
+class ReactionMapper{
+
+    fun toEntity(reactionRequest: ReactionRequest): Reaction {
+        reactionRequest.run {
+            return Reaction(
+                postId = postId,
+                userId = userId,
+                reactionType = reactionType,
+            )
+        }
+    }
+
+    fun toDto(reaction: Reaction, user: UserResponse): ReactionResponse {
+        reaction.run {
+            return ReactionResponse(
+                id  = id!!,
+                postId = postId,
+                userId = userId,
+                reactionType = reactionType,
+                username = user.username,
+            )
+        }
+    }
+}

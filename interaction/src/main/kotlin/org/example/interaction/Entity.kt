@@ -42,7 +42,6 @@ class Comment(
 @Entity
 class Reaction(
     @Column(nullable = false) var userId:Long,
-    @Column(nullable = true) var postId:Long? = null,
-    @Column(nullable = true) var commentId:Long? = null,
+    @Column(nullable = true) var postId:Long,
     @Column(nullable = false) @Enumerated(value = EnumType.STRING) var reactionType: ReactionType
 ):BaseEntity()
