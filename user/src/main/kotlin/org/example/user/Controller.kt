@@ -27,6 +27,10 @@ class UserController(
     @DeleteMapping("/{userId}")
     fun delete(@PathVariable userId: Long) = userService.delete(userId)
 
+
+    @GetMapping("/myProfile/{userId}")
+    fun getProfile(@PathVariable userId: Long) = userService.getProfileUserId(userId)
+
 }
 
 @RestController
@@ -46,4 +50,10 @@ class FollowController(
 
     @GetMapping("/isFollowed/{followerId}/{followingId}")
     fun isFollowed(@PathVariable followerId: Long, @PathVariable followingId: Long) = userFollowService.existFollow(followerId, followingId)
+
+    @GetMapping("/myFollowers/{userId}")
+    fun myFollower(@PathVariable userId: Long) = userFollowService.followerByUserId(userId)
+
+    @GetMapping("/myFollowings/{userId}")
+    fun myFollowing(@PathVariable userId:Long) = userFollowService.followingByUserId(userId)
 }

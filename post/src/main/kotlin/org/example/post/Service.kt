@@ -9,6 +9,7 @@ interface PostService {
     fun getPost(postId: Long): PostResponse
     fun getAllUserId(userId: Long, viewerId:Long): List<PostResponse>
     fun getAllPosts(): List<PostResponse>
+    fun countPostsByUserId(userId: Long): Long
 }
 
 @Service
@@ -90,5 +91,12 @@ class PostServiceImpl(
             val media = postMediaRepository.findAllNotDeleted().filter { it.postId == post.id }
             postMapper.toPostResponse(post, media)
         }
+    }
+
+
+    override fun countPostsByUserId(userId: Long): Long {
+        var user = userClient.getUserById(userId)
+        // exceptions tekshirladimi yoki yoqmi
+        return postRepository.countByUserIdAndDeletedFalse(userId)
     }
 }

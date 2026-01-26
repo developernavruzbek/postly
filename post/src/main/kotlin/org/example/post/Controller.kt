@@ -42,4 +42,7 @@ class PostController(
 
     @GetMapping
     fun getAll() = postService.getAllPosts()
+
+    @GetMapping("/user/count/{userId}")
+    fun getPostsByUser(@PathVariable userId: Long) = postService.countPostsByUserId(userId)
 }

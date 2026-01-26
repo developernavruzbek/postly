@@ -58,7 +58,12 @@ interface UserRepository : BaseRepository<User> {
     fun existsByPhoneNumberAndDeletedFalse(phone: String): Boolean
 }
 
+@Repository
 interface  UserFollowingRepository : BaseRepository<UserFollow> {
     fun findByFollowerAndFollowingAndDeletedFalse(follower: User, following: User): UserFollow?
     fun existsByFollowerAndFollowingAndStatusAndDeletedFalse(follower: User, following: User, status: FollowStatus): Boolean
+    fun findAllByFollowingAndStatusAndDeletedFalse(following: User, status: FollowStatus): MutableList<UserFollow>
+    fun findAllByFollowerAndStatusAndDeletedFalse(follower: User, status: FollowStatus):MutableList<UserFollow>
+    fun countByFollowerAndStatusAndDeletedFalse(follower: User, status: FollowStatus): Long
+    fun countByFollowingAndStatusAndDeletedFalse(following: User, status: FollowStatus): Long
 }

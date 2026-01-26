@@ -55,7 +55,7 @@ class BaseRepositoryImpl<T : BaseEntity>(
 @Repository
 interface PostRepository : BaseRepository<Post>{
     fun findAllByUserIdAndDeletedFalse(userId: Long): List<Post>
-
+    fun countByUserIdAndDeletedFalse(userId: Long): Long
 }
 
 @Repository

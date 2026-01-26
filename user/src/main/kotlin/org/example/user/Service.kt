@@ -11,12 +11,15 @@ interface UserService{
     fun update(userCreateRequest: UserCreateRequest)
     fun delete(id: Long)
     fun getAll() : List<UserResponse>
+    fun getProfileUserId(userId: Long) : MyProfile
 }
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val followingRepository: UserFollowingRepository,
+    private val postClient: PostClient
 ) : UserService {
     override fun create(userCreateRequest: UserCreateRequest) {
         userCreateRequest.run {
@@ -48,6 +51,27 @@ class UserServiceImpl(
         return userRepository.findAllNotDeleted()
             .map { userMapper.toDto(it) }
     }
+
+    override fun getProfileUserId(userId: Long): MyProfile {
+        val user = userRepository.findByIdAndDeletedFalse(userId)
+            ?:throw UserNotFoundException()
+
+        val myFollowers  = followingRepository.countByFollowingAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
+        val myFollowings  = followingRepository.countByFollowerAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
+        var postCount = postClient.countPostsByUserId(userId)
+
+
+        return MyProfile(
+            id = user.id,
+            username = user.username,
+            fullName = user.fullName,
+            phoneNumber = user.phoneNumber,
+            bio = user.bio,
+            myFollowers = myFollowers,
+            myFollowing =  myFollowings,
+            myPostCount = postCount
+        )
+    }
 }
 
 
@@ -56,6 +80,8 @@ interface UserFollowService{
     fun unfollow(userFollowCreateRequest: UserFollowCreateRequest)
     fun confirmFollow(userFollowCreateRequest: UserFollowCreateRequest)
     fun existFollow(followerId: Long, followingId:Long): Boolean
+    fun followerByUserId(userId:Long) :List<UserResponse>
+    fun followingByUserId(userId:Long) :List<UserResponse>
 }
 
 
@@ -63,7 +89,8 @@ interface UserFollowService{
 class UserFollowServiceImpl(
     private val followMapper: UserFollowMapper,
     private val userRepository: UserRepository,
-    private val followingRepository: UserFollowingRepository
+    private val followingRepository: UserFollowingRepository,
+    private val userMapper: UserMapper
 ) : UserFollowService {
 
     override fun follow(userFollowCreateRequest: UserFollowCreateRequest) {
@@ -134,5 +161,27 @@ class UserFollowServiceImpl(
             ?: throw UserNotFoundException()
         return followingRepository.existsByFollowerAndFollowingAndStatusAndDeletedFalse(follower, following, FollowStatus.ACCEPTED)
 
+    }
+
+    override fun followerByUserId(userId: Long): List<UserResponse> {
+        var user = userRepository.findByIdAndDeletedFalse(userId)
+            ?:throw UserNotFoundException()
+        var allFollows =
+            followingRepository.findAllByFollowingAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
+        return allFollows.map { follow->
+            userMapper.toDto(follow.follower)
+        }
+    }
+
+    override fun followingByUserId(userId: Long): List<UserResponse> {
+        var user  = userRepository.findByIdAndDeletedFalse(userId)
+            ?:throw UserNotFoundException()
+
+        var allFollows =
+            followingRepository.findAllByFollowerAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
+
+        return allFollows.map {
+            userMapper.toDto(it.following)
+        }
     }
 }

@@ -26,6 +26,17 @@ data class UserResponse(
     val accountType: AccountType
 )
 
+data class MyProfile(
+    val id:Long?,
+    val fullName: String?,
+    val phoneNumber: String?,
+    val username: String?,
+    val bio: String?,
+    val myFollowers: Long,
+    val myFollowing: Long,
+    val myPostCount: Long,
+)
+
 data class UserFollowCreateRequest(
     val followerId: Long,
     val followingId: Long,
