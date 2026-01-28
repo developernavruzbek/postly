@@ -1,6 +1,7 @@
 package org.example.user
 
 
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,13 +20,17 @@ class UserController(
     fun getAll() = userService.getAll()
 
     @PostMapping
-    fun create(@RequestBody userCreateRequest: UserCreateRequest)  = userService.create(userCreateRequest)
+    fun create(@Valid @RequestBody userCreateRequest: UserCreateRequest)  = userService.create(userCreateRequest)
 
     @GetMapping("/{userId}")
     fun getOne(@PathVariable userId: Long) = userService.getById(userId)
 
     @DeleteMapping("/{userId}")
     fun delete(@PathVariable userId: Long) = userService.delete(userId)
+
+
+    @PutMapping("/{userId}")
+    fun update(@PathVariable userId:Long,@Valid @RequestBody userUpdateRequest: UserUpdateRequest) = userService.update(userId, userUpdateRequest)
 
 
     @GetMapping("/myProfile/{userId}")
@@ -38,15 +43,14 @@ class UserController(
 class FollowController(
     private val userFollowService: UserFollowService,
 ){
-
     @PostMapping("/follow")
-    fun follow(@RequestBody userFollowCreateRequest: UserFollowCreateRequest) = userFollowService.follow(userFollowCreateRequest)
+    fun follow(@Valid @RequestBody userFollowRequest: UserFollowRequest) = userFollowService.follow(userFollowRequest)
 
     @DeleteMapping("/unfollow")
-    fun unfollow(@RequestBody userFollowCreateRequest: UserFollowCreateRequest) = userFollowService.unfollow(userFollowCreateRequest)
+    fun unfollow(@Valid @RequestBody userFollowRequest: UserFollowRequest) = userFollowService.unfollow(userFollowRequest)
 
     @PutMapping("/confirm")
-    fun confirmFollow(@RequestBody userFollowCreateRequest: UserFollowCreateRequest) = userFollowService.confirmFollow(userFollowCreateRequest)
+    fun confirmFollow(@Valid @RequestBody userFollowConfirmRequest: UserFollowConfirmRequest) = userFollowService.confirmFollow(userFollowConfirmRequest)
 
     @GetMapping("/isFollowed/{followerId}/{followingId}")
     fun isFollowed(@PathVariable followerId: Long, @PathVariable followingId: Long) = userFollowService.existFollow(followerId, followingId)

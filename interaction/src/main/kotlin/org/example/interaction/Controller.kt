@@ -1,6 +1,7 @@
 package org.example.interaction
 
 
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,7 +19,7 @@ class CommentController(
 ) {
 
     @PostMapping
-    fun createComment(@RequestBody request: CommentRequest) =
+    fun createComment(@Valid @RequestBody request: CommentRequest) =
         commentService.createComment(request)
 
     @DeleteMapping("/{id}")
@@ -32,7 +33,7 @@ class CommentController(
     @PutMapping("/{id}")
     fun editComment(
         @PathVariable id: Long,
-        @RequestBody request: CommentUpdateRequest
+        @Valid @RequestBody request: CommentUpdateRequest
     ) = commentService.editComment(id, request)
 
     @GetMapping
@@ -48,6 +49,7 @@ class CommentController(
 }
 
 
+
 @RestController
 @RequestMapping("/api/v1/reactions")
 class ReactionController(
@@ -55,7 +57,7 @@ class ReactionController(
 ) {
 
     @PostMapping
-    fun createReaction(@RequestBody request: ReactionRequest) =
+    fun createReaction(@Valid @RequestBody request: ReactionRequest) =
         reactionService.createReaction(request)
 
     @DeleteMapping("/{id}")
@@ -65,7 +67,7 @@ class ReactionController(
     @PutMapping("/{id}")
     fun updateReaction(
         @PathVariable id: Long,
-        @RequestBody request: ReactionUpdateRequest
+        @Valid @RequestBody request: ReactionUpdateRequest
     ) = reactionService.updateReaction(id, request)
 
     @GetMapping("/post/{postId}/user/{userId}")

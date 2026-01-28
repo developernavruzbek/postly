@@ -1,14 +1,14 @@
 package org.example.user
 
 
-
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 interface UserService{
 
     fun create( userCreateRequest: UserCreateRequest)
     fun getById(id: Long): UserResponse
-    fun update(userCreateRequest: UserCreateRequest)
+    fun update(userId:Long ,userUpdateRequest: UserUpdateRequest)
     fun delete(id: Long)
     fun getAll() : List<UserResponse>
     fun getProfileUserId(userId: Long) : MyProfile
@@ -21,6 +21,8 @@ class UserServiceImpl(
     private val followingRepository: UserFollowingRepository,
     private val postClient: PostClient
 ) : UserService {
+
+    @Transactional
     override fun create(userCreateRequest: UserCreateRequest) {
         userCreateRequest.run {
             userRepository.findByUsernameAndDeletedFalse(username)?.let {
@@ -39,14 +41,65 @@ class UserServiceImpl(
         } ?: throw UserNotFoundException()
     }
 
-    override fun update(userCreateRequest: UserCreateRequest) {
-        TODO("Not yet implemented")
+
+    @Transactional
+    override fun update(userId: Long, userUpdateRequest: UserUpdateRequest) {
+
+        var user = userRepository.findByIdAndDeletedFalse(userId)
+        if (user==null){
+           throw UserNotFoundException()
+        }
+        userUpdateRequest.run {
+            fullName?.let {
+                if(!it.trim().isEmpty())
+                    user.fullName = it
+            }
+
+            phoneNumber?.let {
+                if (!it.trim().isEmpty()){
+                    userRepository.findByPhoneNumberAndDeletedFalse(it)?.let {
+                        throw PhoneNumberAlreadyExistsException()
+                    }
+                    user.phoneNumber = it
+                }
+            }
+
+            username?.let {
+                if (!it.trim().isEmpty()){
+                    userRepository.findByUsernameAndDeletedFalse(it)?.let {
+                        throw UserNameAlreadyExistsException()
+                    }
+                    user.phoneNumber  = it
+                }
+            }
+
+            password?.let {
+                if (!it.trim().isEmpty())
+                    user.password = it
+            }
+            bio?.let {
+                if (!it.trim().isEmpty())
+                    user.bio = it
+            }
+
+            avatarUrl?.let {
+                if (!it.trim().isEmpty())
+                    user.avatarUrl = it
+            }
+            accountType?.let {
+                user.accountType  = it
+            }
+            userRepository.save(user)
+
+        }
+
     }
 
     override fun delete(id: Long) {
         userRepository.trash(id)
             ?: throw UserNotFoundException()
     }
+
     override fun getAll(): List<UserResponse> {
         return userRepository.findAllNotDeleted()
             .map { userMapper.toDto(it) }
@@ -59,7 +112,6 @@ class UserServiceImpl(
         val myFollowers  = followingRepository.countByFollowingAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
         val myFollowings  = followingRepository.countByFollowerAndStatusAndDeletedFalse(user, FollowStatus.ACCEPTED)
         var postCount = postClient.countPostsByUserId(userId)
-
 
         return MyProfile(
             id = user.id,
@@ -76,9 +128,9 @@ class UserServiceImpl(
 
 
 interface UserFollowService{
-    fun follow(userFollowCreateRequest: UserFollowCreateRequest)
-    fun unfollow(userFollowCreateRequest: UserFollowCreateRequest)
-    fun confirmFollow(userFollowCreateRequest: UserFollowCreateRequest)
+    fun follow(userFollowCreateRequest: UserFollowRequest)
+    fun unfollow(userFollowCreateRequest: UserFollowRequest)
+    fun confirmFollow(userFollowConfirmRequest: UserFollowConfirmRequest)
     fun existFollow(followerId: Long, followingId:Long): Boolean
     fun followerByUserId(userId:Long) :List<UserResponse>
     fun followingByUserId(userId:Long) :List<UserResponse>
@@ -93,7 +145,8 @@ class UserFollowServiceImpl(
     private val userMapper: UserMapper
 ) : UserFollowService {
 
-    override fun follow(userFollowCreateRequest: UserFollowCreateRequest) {
+    @Transactional
+    override fun follow(userFollowCreateRequest: UserFollowRequest) {
         userFollowCreateRequest.run {
             var follower = userRepository.findByIdAndDeletedFalse(followerId)
                 ?: throw UserNotFoundException()
@@ -119,7 +172,8 @@ class UserFollowServiceImpl(
         }
     }
 
-    override fun unfollow(userFollowCreateRequest: UserFollowCreateRequest) {
+    @Transactional
+    override fun unfollow(userFollowCreateRequest: UserFollowRequest) {
         userFollowCreateRequest.run {
             val follower = userRepository.findByIdAndDeletedFalse(followerId)
                 ?: throw UserNotFoundException()
@@ -133,9 +187,10 @@ class UserFollowServiceImpl(
         }
     }
 
-    override fun confirmFollow(userFollowCreateRequest: UserFollowCreateRequest) {
+    @Transactional
+    override fun confirmFollow(userFollowConfirmRequest: UserFollowConfirmRequest) {
 
-        userFollowCreateRequest.run {
+        userFollowConfirmRequest.run {
             val follower = userRepository.findByIdAndDeletedFalse(followerId)
                 ?: throw UserNotFoundException()
 
@@ -148,7 +203,17 @@ class UserFollowServiceImpl(
             if (follow.status == FollowStatus.ACCEPTED) {
                 throw FollowAlreadyExistsException()
             }
-            follow.status = FollowStatus.ACCEPTED
+            if (follow.status == FollowStatus.REJECTED){
+                throw FollowAlreadyExistsException()
+            }
+
+
+            if (userFollowConfirmRequest.followStatus== FollowStatus.ACCEPTED){
+                follow.status = FollowStatus.ACCEPTED
+            }else if(userFollowConfirmRequest.followStatus== FollowStatus.REJECTED){
+                follow.status = FollowStatus.REJECTED
+            }
+
             followingRepository.save(follow)
         }
     }

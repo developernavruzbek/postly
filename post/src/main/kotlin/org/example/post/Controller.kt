@@ -2,6 +2,7 @@ package org.example.post
 
 
 
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +22,7 @@ class PostController(
 
 
     @PostMapping
-    fun createPost(@RequestBody request: CreatePostRequest): PostResponse {
+    fun createPost(@Valid @RequestBody request: CreatePostRequest): PostResponse {
 
         return postService.createPost(request)
     }

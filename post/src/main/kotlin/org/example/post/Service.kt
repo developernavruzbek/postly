@@ -3,6 +3,7 @@ package org.example.post
 
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 interface PostService {
     fun createPost(request: CreatePostRequest): PostResponse
@@ -21,6 +22,7 @@ class PostServiceImpl(
     private val followClient: FollowClient
 ) : PostService {
 
+    @Transactional
     override fun createPost(request: CreatePostRequest): PostResponse {
         val user = userClient.getUserById(request.userId)
             ?: throw UserNotFoundException()

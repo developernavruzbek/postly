@@ -7,7 +7,8 @@ enum class AccountType{
 
 enum class FollowStatus {
     PENDING,
-    ACCEPTED
+    ACCEPTED,
+    REJECTED
 }
 
 
