@@ -5,7 +5,6 @@ import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import kotlin.code
 
 @ControllerAdvice
 class ExceptionHandler(private val errorMessageSource: ResourceBundleMessageSource) {

@@ -2,14 +2,22 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("plugin.allopen") version "1.9.25"
     id("org.springframework.boot") version "3.4.7"
     id("io.spring.dependency-management") version "1.1.7"
 }
+val springCloudVersion by extra("2024.0.1")
 
 
 group = "org.example"
 version = "0.0.1-SNAPSHOT"
 description = "user"
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
+}
 
 java {
     toolchain {
@@ -21,30 +29,23 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudVersion"] = "2024.0.1"
-
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Web faqat 1 marta!
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
     implementation("org.springframework.cloud:spring-cloud-starter-config")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     runtimeOnly("org.postgresql:postgresql")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("jakarta.validation:jakarta.validation-api:3.1.1")
-}
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-    }
-}
-
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.MappedSuperclass")
-    annotation("jakarta.persistence.Embeddable")
+    // ❗❗ ENG MUHIM QO‘SHILADIGAN QATOR ❗❗
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
 kotlin {
@@ -52,7 +53,8 @@ kotlin {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
 }

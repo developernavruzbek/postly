@@ -1,4 +1,5 @@
 package org.example.interaction
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.validation.constraints.*
 
 
@@ -93,4 +94,12 @@ data class ReactionResponse(
     val postId: Long,
     val reactionType: ReactionType
 
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class UserInfoResponse(
+    val id: Long,
+    val fullName: String,
+    val username: String,
+    val role: String,
 )

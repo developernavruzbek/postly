@@ -1,6 +1,7 @@
 package org.example.post
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.URL
 import java.util.Date
@@ -70,4 +71,12 @@ data class PostMediaResponse(
     val fileSize: Long?,
     val duration: Int?,
     val orderIndex: Int
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class UserInfoResponse(
+    val id: Long,
+    val fullName: String,
+    val username: String,
+    val role: String,
 )

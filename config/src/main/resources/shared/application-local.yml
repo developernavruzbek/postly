@@ -4,8 +4,18 @@ services:
     gateway: http://localhost:7777
     user: http://localhost:8080
     interaction: http://localhost:8084
+    auth: http://localhost:8089
   ports:
     post: 8082
     gateway: 7777
     user: 8080
     interaction: 8084
+    auth: 8089
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        user-info-uri: ${services.hosts.auth}/internal/user-info
+        jwt:
+          issuer-uri: http://localhost:8089

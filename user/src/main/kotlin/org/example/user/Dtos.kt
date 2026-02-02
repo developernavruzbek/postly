@@ -106,3 +106,14 @@ data class UserFollowResponse(
     val followingUsername: String,
     val status: FollowStatus
 )
+
+data class UserInfoResponse(
+    val id: Long,
+    val fullName: String,
+    val username: String,
+    val role: String,
+)
+data class UserDto(
+    var id: Long,
+    var name: String,
+)

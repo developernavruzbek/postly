@@ -43,3 +43,9 @@ spring:
             - Path=/api/v1/reactions/**
           filters:
             - RewritePath=/api/v1/reactions/(?<remaining>.*), /api/v1/reactions/${remaining}
+        - id: auth-route
+          uri: ${services.hosts.auth}
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - RewritePath=/api/v1/auth(?<remaining>/?.*), /${remaining}
